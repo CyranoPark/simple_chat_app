@@ -33,9 +33,16 @@ export default function entireMessages(state = initialState, action) {
     });
 
   case RECIEVE_CURRENT_MESSAGES:
-    const currentMessages = filterListById(state.messages, action.id);
+    const currentMessageData = filterListById(state.messages, action.id);
+    let currentMessages;
+    if (!currentMessageData) {
+      currentMessages = [];
+    } else {
+      currentMessages = currentMessageData.message;
+    }
+
     return Object.assign({...state}, {
-      currentMessages: currentMessages.message,
+      currentMessages: currentMessages,
       isLoadingCurMessages: false
     });
 

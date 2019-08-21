@@ -14,7 +14,7 @@ import {
   getInitialChatList,
   getInitialMessages
 } from '../utils/api';
-import { addInitialMessageToChatList } from '../utils/utils';
+import { addInitialMessageToChatList, sortObjectsInArrayByDate } from '../utils/utils';
 import App from '../component/App';
 
 const mapStateToProps = (state) => {
@@ -22,7 +22,7 @@ const mapStateToProps = (state) => {
     addInitialMessageToChatList(state.chatList.chats, state.entireMessages.messages)
   }
   const newProps = {
-    chatList : state.chatList.chats,
+    chatList : sortObjectsInArrayByDate(state.chatList.chats, 'lastUpdate'),
     messages : state.entireMessages.messages,
     currentChat : state.chatList.currentChat,
     currentMessages : state.entireMessages.currentMessages,
@@ -46,6 +46,8 @@ const mapDispatchToProps = (dispatch) => {
             .then(messages => {
               dispatch(recieveInitialChatList(chatList));
               dispatch(recieveInitialMessages(messages));
+            }).catch(err => {
+              console.error(err);
             });
         });
     },

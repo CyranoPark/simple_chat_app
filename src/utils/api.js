@@ -5,7 +5,7 @@ export const getInitialChatList = () => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       resolve(chatList);
-    }, 100);
+    }, 500);
   });
 };
 
@@ -13,6 +13,6 @@ export const getInitialMessages = () => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       resolve(messageHistory);
-    }, 100);
+    }, 500);
   });
 };

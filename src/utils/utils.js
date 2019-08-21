@@ -17,7 +17,7 @@ export function changeDateFormat(date) {
     }
   }
 
-  return `${targetDate.getMonth() + 1}.${targetDate.getDate()}`;
+  return `${displayDigit(targetDate.getMonth() + 1, 2)}/${displayDigit(targetDate.getDate(), 2)}`;
 }
 
 export function changeTimeFormat(date) {
@@ -26,10 +26,10 @@ export function changeTimeFormat(date) {
   const periodFromNow = Math.floor((today - targetDate) / 60000);
 
   if (periodFromNow < targetDate.getHours() * 60) {
-    return `${targetDate.getHours()}:${targetDate.getMinutes()}`;
+    return `${displayDigit(targetDate.getHours(), 2)}:${displayDigit(targetDate.getMinutes(), 2)}`;
   }
 
-  return `${targetDate.getMonth() + 1}.${targetDate.getDate()}`;
+  return `${displayDigit(targetDate.getMonth() + 1, 2)}/${displayDigit(targetDate.getDate(), 2)}`;
 }
 
 export function addInitialMessageToChatList (chatList, messages) {
@@ -42,6 +42,12 @@ export function addInitialMessageToChatList (chatList, messages) {
   });
 }
 
+export function sortObjectsInArrayByDate (array, dateKey) {
+  return array.sort((a, b) => {
+    return new Date(b[dateKey]) - new Date(a[dateKey]);
+  });
+}
+
 export function Message (txt) {
   const message = {};
   message.text = txt;
@@ -49,4 +55,14 @@ export function Message (txt) {
   message.isRecieved = false;
 
   return message;
+}
+
+function displayDigit (number, digit) {
+  number = number + '';
+
+  if (number.length >= digit) {
+    return number;
+  }
+
+  return new Array(digit - number.length + 1).join('0') + number;
 }

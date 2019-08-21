@@ -32,7 +32,11 @@ export default function chatList(state = initialState, action) {
     });
 
   case RECIEVE_CURRENT_CHAT:
-    const currentChat = filterListById(state.chats, action.id);
+    let currentChat = filterListById(state.chats, action.id);
+    if (!currentChat) {
+      currentChat = [];
+    }
+
     return Object.assign({...state}, {
       currentChat: currentChat,
       isLoadingCurrentChats: false
