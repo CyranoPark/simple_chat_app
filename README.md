@@ -66,6 +66,14 @@ https://github.com/reduxjs/redux/tree/master/examples/shopping-cart
 * React/Redux/React Router을 사용해 SPA(Single Page Application)로 만들어주세요.
 * 화면전환 등 다양한 효과들은 마음껏 보여주셔도 됩니다.
 
+### Things to remember
+
+* 서버에서 전달받는 JSON 데이터를 작성하시기 전에 반드시 Normalize(정규화)에 대한 글을 읽어보세요.
+  - [자료 정규화 Wikipedia](https://ko.wikipedia.org/wiki/%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%B2%A0%EC%9D%B4%EC%8A%A4_%EC%A0%95%EA%B7%9C%ED%99%94)
+  - [Redux 상태 정규화하기](https://deminoth.github.io/redux/recipes/reducers/NormalizingStateShape.html)
+* 서버에서 전달받는 JSON 데이터를 작성하실 때는 각각의 Entity에 대한 JSON을 별개로 만드시기 바랍니다. 예) Chatroom, Messages, Users, etc
+* JSON 데이터에 입력하는 시간 정보는 [ISO 형식](https://ko.wikipedia.org/wiki/ISO_8601)을 이용하세요.
+
 ### Advanced
 
 * [Test Code 작성하기](https://gitlab.com/vanilla-coding/bootcamp/wiki/blob/master/tdd/test.md) (Reducer와 Presentational Component 1-2개씩 작성해보시기 바랍니다.)
