@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { changeTimeFormat } from '../utils/utils';
+import { changeDateFormat } from '../utils/utils';
 import '../style/ChatWindow.css';
 
 export default class ChatWindow extends Component {
@@ -58,7 +58,7 @@ export default class ChatWindow extends Component {
           />
           <div className="message-txt">
             <span>{message.text}</span>
-            <div className="message-datetime">{changeTimeFormat(message.datetime)}</div>
+            <div className="message-datetime">{changeDateFormat(message.datetime)}</div>
           </div>
         </li>
       );

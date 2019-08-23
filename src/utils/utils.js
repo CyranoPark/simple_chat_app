@@ -7,7 +7,6 @@ export function filterChatListById (chatList, id) {
   });
 }
 
-
 export function changeDateFormat(date) {
   const targetDate = new Date(date);
   const today = new Date();
@@ -23,23 +22,6 @@ export function changeDateFormat(date) {
     return `${periodFromNowToString} 전`;
 
   }
-  return format(targetDate, 'MM/dd');
-}
-
-export function changeTimeFormat(date) {
-  const targetDate = new Date(date);
-  const today = new Date();
-  const periodFromNow = Math.floor((today - targetDate) / 60000);
-  const periodFromNowToString = formatDistanceStrict(
-    targetDate,
-    today,
-    { locale : koLocale }
-  );
-
-  if (periodFromNow < targetDate.getHours() * 60) {
-    return `${periodFromNowToString} 전`;
-  }
-
   return format(targetDate, 'MM/dd');
 }
 
@@ -67,14 +49,4 @@ export function Message (txt) {
   message.isRecieved = false;
 
   return message;
-}
-
-function displayDigit (number, digit) {
-  number = number + '';
-
-  if (number.length >= digit) {
-    return number;
-  }
-
-  return new Array(digit - number.length + 1).join('0') + number;
 }
