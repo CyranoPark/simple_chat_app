@@ -1,8 +1,9 @@
-export function filterListById (list, id) {
-  return list.find(el => {
-    return Number(id) === el.id;
+export function filterChatListById (chatList, id) {
+  return chatList.find((chat) => {
+    return chat.id + '' === id;
   });
 }
+
 
 export function changeDateFormat(date) {
   const targetDate = new Date(date);
@@ -34,7 +35,8 @@ export function changeTimeFormat(date) {
 
 export function addInitialMessageToChatList (chatList, messages) {
   return chatList.map(chat => {
-    const messageHistory = filterListById(messages, chat.id).message;
+    const messageHistory = messages[chat.messages + ''].message
+
     return Object.assign(chat, {
       initialMessage: messageHistory[messageHistory.length - 1].text,
       lastUpdate: messageHistory[messageHistory.length - 1].datetime

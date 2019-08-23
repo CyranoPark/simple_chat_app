@@ -7,7 +7,8 @@ import {
   RECIEVE_CURRENT_CHAT,
   REQUEST_CURRENT_MESSAGES,
   RECIEVE_CURRENT_MESSAGES,
-  SEND_MESSAGE
+  SEND_MESSAGE,
+  COMPLETE_SEND_MESSAGE
 } from '../constants/actionType';
 
 export const requestInitialChatList = () => {
@@ -66,7 +67,12 @@ export const sendMessage = (text, id) => {
   return {
     type: SEND_MESSAGE,
     text,
-    id,
-    date: new Date().toISOString()
+    id
+  };
+};
+
+export const completeSendMessage = () => {
+  return {
+    type: COMPLETE_SEND_MESSAGE
   };
 };

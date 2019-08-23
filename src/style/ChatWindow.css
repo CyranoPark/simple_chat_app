@@ -154,6 +154,10 @@
   width: 72px;
   border-radius: 6px;
   right: 0;
+  margin: 0;
+  color: white;
+  font-weight: bold;
+  font-size: 20px;
 }
 
 .sendbtn:hover,
@@ -170,12 +174,7 @@
 .back-btn:focus {
   outline: none;
 }
-.sendbtn span {
-  margin: 0;
-  color: white;
-  font-weight: bold;
-  font-size: 20px;
-}
+
 .sendbtn-wrap {
   display: inline-block;
   background-color: #fff;
@@ -186,11 +185,23 @@
 .empty-message-modal {
   position: absolute;
   width: 375px;
-  height: 740px;
-  line-height: 600px;
+  height: 770px;
+  line-height: 770px;
   top: -80px;
   font-weight: bold;
   color: white;
   background-color: rgba(0, 0, 0, 0.507);
   z-index: 1;
+}
+
+.empty-message-modal button {
+  margin-left: -25px;
+  margin-top: 20px;
+  left: 50%;
+  top: 50%;
+  width: 50px;
+  background-color: black;
+  border-radius: 10px;
+  color: white;
+  padding: 5px;
 }

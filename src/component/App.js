@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Route, Switch, Redirect } from 'react-router-dom';
+import { Route, Redirect } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import ChatList from '../component/ChatList';
 import ChatWindow from '../component/ChatWindow';
 import LoadingModal from './LoadingModal';
@@ -30,7 +31,7 @@ export default class App extends Component {
             isLoadingInitialChats || isLoadingMessages ?
             <LoadingModal />
             : (
-              <Switch>
+              <>
                 <Route
                   exact path="/"
                   render={() => <Redirect to="/chatList" />}
@@ -58,7 +59,7 @@ export default class App extends Component {
                     />
                   }
                 />
-              </Switch>
+              </>
             )
           }
         </div>
@@ -66,3 +67,15 @@ export default class App extends Component {
     );
   }
 }
+
+App.propTypes = {
+  chatList: PropTypes.array.isRequired,
+  currentChat: PropTypes.object.isRequired,
+  currentMessages: PropTypes.array.isRequired,
+  isLoadingInitialChats: PropTypes.bool.isRequired,
+  isLoadingMessages: PropTypes.bool.isRequired,
+  isLoadingCurrentChats: PropTypes.bool.isRequired,
+  isLoadingCurMessages: PropTypes.bool.isRequired,
+  onChatWindowLoad: PropTypes.func.isRequired,
+  onMessageSendBtnClick : PropTypes.func.isRequired,
+};

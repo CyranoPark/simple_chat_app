@@ -1,62 +1,36 @@
-import { filterListById, Message } from '../utils/utils';
+import { Message } from '../utils/utils';
 import {
   REQUEST_INIT_MESSAGES,
   RECIEVE_INIT_MESSAGES,
-  REQUEST_CURRENT_MESSAGES,
-  RECIEVE_CURRENT_MESSAGES,
   SEND_MESSAGE
 } from "../constants/actionType";
 
 const initialState = {
-  messages: [],
-  currentMessages: [],
-  isMessagesLoading: true,
-  isLoadingCurMessages : true
+  messages: {},
+  isLoadingMessages: true
 };
 
-export default function entireMessages(state = initialState, action) {
+export default function copiedMessages(state = initialState, action) {
   switch (action.type) {
   case REQUEST_INIT_MESSAGES:
     return Object.assign({...state}, {
-      isMessagesLoading: true
+      isLoadingMessages: true
     });
 
   case RECIEVE_INIT_MESSAGES:
     return Object.assign({...state}, {
       messages: action.messages,
-      isMessagesLoading: false
-    });
-
-  case REQUEST_CURRENT_MESSAGES:
-    return Object.assign({...state}, {
-      isLoadingCurMessages: true
-    });
-
-  case RECIEVE_CURRENT_MESSAGES:
-    const currentMessageData = filterListById(state.messages, action.id);
-    let currentMessages;
-    if (!currentMessageData) {
-      currentMessages = [];
-    } else {
-      currentMessages = currentMessageData.message;
-    }
-
-    return Object.assign({...state}, {
-      currentMessages: currentMessages,
-      isLoadingCurMessages: false
+      isLoadingMessages: false
     });
 
   case SEND_MESSAGE:
-    const currentMessage = filterListById(state.messages, action.id);
-    const targetIndex = state.messages.indexOf(currentMessage);
-    const newCurMessage = new Message(action.text);
-
-    const newMessages = [...state.messages];
-    newMessages[targetIndex].message.push(newCurMessage);
+    const newMessage = new Message(action.text);
+    const copiedMessage = Object.assign({}, {...state.messages});
+    copiedMessage[action.id].message.push(newMessage);
 
     return Object.assign({...state}, {
-      messages: newMessages,
-      currentMessages: [...currentMessage.message]
+      messages: copiedMessage,
+      isLoadingMessages: false
     });
 
     default:

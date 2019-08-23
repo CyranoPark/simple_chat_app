@@ -6,7 +6,7 @@ import '../style/ChatList.css';
 export default function ChatList (props) {
   const { chatList } = props;
 
-  const renderList = chatList.map((chat, i) => {
+  const renderChatList = chatList.map((chat, i) => {
     return (
       <Link key={i} to={`/chatList/${chat.id}`}>
         <li className="chat">
@@ -28,7 +28,7 @@ export default function ChatList (props) {
       </header>
       <div className="list-container">
         <ul className="chat-list">
-          {renderList}
+          {renderChatList}
         </ul>
       </div>
     </>

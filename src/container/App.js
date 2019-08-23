@@ -1,5 +1,14 @@
 import { connect } from 'react-redux';
+import App from '../component/App';
+import * as actions from '../actions';
+import { getInitialChatList, getInitialMessages } from '../utils/api';
 import {
+  addInitialMessageToChatList,
+  sortObjectsInArrayByDate,
+  filterChatListById
+} from '../utils/utils';
+
+const {
   requestInitialChatList,
   recieveInitialChatList,
   requestInitialMessages,
@@ -8,28 +17,32 @@ import {
   recieveCurrentChat,
   requestCurrentMessages,
   recieveCurrentMessages,
-  sendMessage
-} from '../actions';
-import {
-  getInitialChatList,
-  getInitialMessages
-} from '../utils/api';
-import { addInitialMessageToChatList, sortObjectsInArrayByDate } from '../utils/utils';
-import App from '../component/App';
+  sendMessage,
+  completeSendMessage
+} = actions;
 
 const mapStateToProps = (state) => {
-  if (state.entireMessages.messages.length) {
-    addInitialMessageToChatList(state.chatList.chats, state.entireMessages.messages)
+  const { chats, isLoadingInitialChats } = state.entireChatList;
+  const { messages, isLoadingMessages } = state.entireMessages;
+  const { currentChatId, isLoadingCurrentChats } = state.currentChat;
+  const { currentMessageId, isLoadingCurMessages } = state.currentMessages;
+
+  const currentChat = currentChatId ? filterChatListById(chats, currentChatId) : {};
+  let currentMessages = currentMessageId ? messages[currentMessageId + ''].message : [];
+
+  if (Object.keys(messages).length) {
+    addInitialMessageToChatList(chats, messages);
   }
+
   const newProps = {
-    chatList : sortObjectsInArrayByDate(state.chatList.chats, 'lastUpdate'),
-    messages : state.entireMessages.messages,
-    currentChat : state.chatList.currentChat,
-    currentMessages : state.entireMessages.currentMessages,
-    isLoadingInitialChats: state.chatList.isLoadingInitialChats,
-    isLoadingCurrentChats: state.chatList.isLoadingCurrentChats,
-    isLoadingMessages : state.entireMessages.isMessagesLoading,
-    isLoadingCurMessages : state.entireMessages.isLoadingCurMessages
+    chatList: sortObjectsInArrayByDate(chats, 'lastUpdate'),
+    messages: messages,
+    currentChat: currentChat,
+    currentMessages: currentMessages,
+    isLoadingInitialChats: isLoadingInitialChats,
+    isLoadingCurrentChats: isLoadingCurrentChats,
+    isLoadingMessages: isLoadingMessages,
+    isLoadingCurMessages: isLoadingCurMessages
   };
 
   return newProps;
@@ -40,6 +53,7 @@ const mapDispatchToProps = (dispatch) => {
     initialDataLoad() {
       dispatch(requestInitialChatList());
       dispatch(requestInitialMessages());
+
       getInitialChatList()
         .then(chatList => {
           getInitialMessages()
@@ -49,16 +63,20 @@ const mapDispatchToProps = (dispatch) => {
             }).catch(err => {
               console.error(err);
             });
+        }).catch(err => {
+          console.error(err);
         });
     },
     onChatWindowLoad(id) {
       dispatch(requestCurrentMessages());
       dispatch(requestCurrentChat());
+
       dispatch(recieveCurrentMessages(id));
       dispatch(recieveCurrentChat(id));
     },
     onMessageSendBtnClick(text, id) {
       dispatch(sendMessage(text, id));
+      dispatch(completeSendMessage());
     }
   };
 }

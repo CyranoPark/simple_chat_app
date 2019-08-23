@@ -1,8 +1,12 @@
 import { combineReducers } from 'redux';
-import chatList from './chatList';
+import entireChatList from './entireChatList';
 import entireMessages from './entireMessages';
+import currentChat from './currentChat';
+import currentMessages from './currentMessages';
 
 export default combineReducers({
-  chatList,
-  entireMessages
+  entireChatList,
+  entireMessages,
+  currentChat,
+  currentMessages
 });

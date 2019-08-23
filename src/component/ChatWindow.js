@@ -7,9 +7,9 @@ export default class ChatWindow extends Component {
   constructor(props) {
     super(props);
 
-    this.inputTxtRef = React.createRef();
     this.chatWindowRef = React.createRef();
     this.userProfileImg = 'https://img.icons8.com/carbon-copy/2x/user.png';
+    this.maximumMessage = 8;
   }
 
   componentDidMount() {
@@ -17,23 +17,23 @@ export default class ChatWindow extends Component {
   }
 
   componentDidUpdate() {
-    this.chatWindowRef.current.scrollTop = this.chatWindowRef.current.scrollHeight;
+    if (this.props.currentMessages.length > this.maximumMessage) {
+      this.chatWindowRef.current.scrollTop = this.chatWindowRef.current.scrollHeight;
+    }
   }
 
-  onSendBtnClick(id) {
-    const inputValue = document.querySelector('.message-inputbox').value;
-    const inputTxtBox = this.inputTxtRef.current;
-
-    if (inputValue === '') {
+  onSendBtnClick(target, id) {
+    if (target.value === '') {
       return;
     }
-    this.props.onMessageSendBtnClick(inputValue, id);
-    inputTxtBox.value = '';
+
+    this.props.onMessageSendBtnClick(target.value, id);
+    target.value = '';
   }
 
   onInputBoxKeyDown(event, id) {
     if (event.key === 'Enter') {
-      this.onSendBtnClick(id);
+      this.onSendBtnClick(event.target, id);
     }
   }
 
@@ -41,13 +41,15 @@ export default class ChatWindow extends Component {
     return (
       <div className="empty-message-modal">
         메시지를 불러올 수 없습니다.
+        <Link to="/chatList">
+          <button className="back-btn" value="back">뒤로</button>
+        </Link>
       </div>
     );
   }
 
   renderMessages() {
     const { currentChat, currentMessages } = this.props;
-
     return currentMessages.map((message, i) => {
       return (
         <li className={message.isRecieved ? "received-message" : "sent-message"} key={i}>
@@ -94,18 +96,23 @@ export default class ChatWindow extends Component {
           </ul>
           <div className="chat-container-blank" />
           <div className="send-message-box">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                this.onSendBtnClick(e.target.message, currentChat.id)
+              }}
+            >
               <input
                 type="text"
                 placeholder="Type Something to send"
                 className="message-inputbox"
-                ref={this.inputTxtRef}
+                name="message"
                 onKeyDown={(e) => this.onInputBoxKeyDown(e, currentChat.id)}
               />
               <span className="sendbtn-wrap">
-                <button className="sendbtn" onClick={() => this.onSendBtnClick(currentChat.id)}>
-                  <span>보내기</span>
-                </button>
+                <input type="submit" className="sendbtn" value="보내기" />
               </span>
+            </form>
           </div>
         </div>
       </>
