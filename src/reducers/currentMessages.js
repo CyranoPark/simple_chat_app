@@ -1,14 +1,12 @@
-import { Message } from '../utils/utils';
 import {
   REQUEST_CURRENT_MESSAGES,
   RECIEVE_CURRENT_MESSAGES,
-  SEND_MESSAGE,
-  COMPLETE_SEND_MESSAGE
+  REQUEST_SEND_MESSAGE,
+  RECIEVE_SEND_MESSAGE
 } from "../constants/actionType";
 
 const initialState = {
-  currentMessageId: null,
-  newMessages: {},
+  currentMessage: null,
   isLoadingCurMessages : true
 };
 
@@ -23,18 +21,19 @@ export default function currentMessages(state = initialState, action) {
 
   case RECIEVE_CURRENT_MESSAGES:
     return Object.assign({...state}, {
-      currentMessageId: action.id,
+      currentMessage: action.messages,
       isLoadingCurMessages: false
     });
 
-  case SEND_MESSAGE:
+  case REQUEST_SEND_MESSAGE:
     return Object.assign({...state}, {
-      newMessages: new Message(action.text)
+      isLoadingCurMessages: true
     });
 
-  case COMPLETE_SEND_MESSAGE:
+  case RECIEVE_SEND_MESSAGE:
     return Object.assign({...state}, {
-      newMessages: {}
+      isLoadingCurMessages: false,
+      currentMessage: action.messages
     });
 
     default:

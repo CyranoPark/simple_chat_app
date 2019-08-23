@@ -1,47 +1,37 @@
 import { connect } from 'react-redux';
 import App from '../component/App';
 import * as actions from '../actions';
-import { getInitialChatList, getInitialMessages } from '../utils/api';
+import { getInitialChatList, getMessagesById, writeMessage } from '../utils/api';
 import {
-  addInitialMessageToChatList,
   sortObjectsInArrayByDate,
-  filterChatListById
+  filterChatListById,
+  Message
 } from '../utils/utils';
 
 const {
   requestInitialChatList,
   recieveInitialChatList,
-  requestInitialMessages,
-  recieveInitialMessages,
   requestCurrentChat,
   recieveCurrentChat,
   requestCurrentMessages,
   recieveCurrentMessages,
-  sendMessage,
-  completeSendMessage
+  requestSendMessage,
+  recieveSendMessage
 } = actions;
 
 const mapStateToProps = (state) => {
   const { chats, isLoadingInitialChats } = state.entireChatList;
-  const { messages, isLoadingMessages } = state.entireMessages;
   const { currentChatId, isLoadingCurrentChats } = state.currentChat;
-  const { currentMessageId, isLoadingCurMessages } = state.currentMessages;
-
+  const { currentMessage, isLoadingCurMessages } = state.currentMessages;
   const currentChat = currentChatId ? filterChatListById(chats, currentChatId) : {};
-  let currentMessages = currentMessageId ? messages[currentMessageId + ''].message : [];
-
-  if (Object.keys(messages).length) {
-    addInitialMessageToChatList(chats, messages);
-  }
+  let currentMessages = currentMessage ? currentMessage.message : [];
 
   const newProps = {
     chatList: sortObjectsInArrayByDate(chats, 'lastUpdate'),
-    messages: messages,
     currentChat: currentChat,
     currentMessages: currentMessages,
     isLoadingInitialChats: isLoadingInitialChats,
     isLoadingCurrentChats: isLoadingCurrentChats,
-    isLoadingMessages: isLoadingMessages,
     isLoadingCurMessages: isLoadingCurMessages
   };
 
@@ -52,17 +42,9 @@ const mapDispatchToProps = (dispatch) => {
   return {
     initialDataLoad() {
       dispatch(requestInitialChatList());
-      dispatch(requestInitialMessages());
-
       getInitialChatList()
         .then(chatList => {
-          getInitialMessages()
-            .then(messages => {
-              dispatch(recieveInitialChatList(chatList));
-              dispatch(recieveInitialMessages(messages));
-            }).catch(err => {
-              console.error(err);
-            });
+          dispatch(recieveInitialChatList(chatList));
         }).catch(err => {
           console.error(err);
         });
@@ -71,12 +53,30 @@ const mapDispatchToProps = (dispatch) => {
       dispatch(requestCurrentMessages());
       dispatch(requestCurrentChat());
 
-      dispatch(recieveCurrentMessages(id));
       dispatch(recieveCurrentChat(id));
+
+      getMessagesById(id).then(messages => {
+        dispatch(recieveCurrentMessages(messages));
+      }).catch(err => {
+        console.error(err);
+      });
     },
-    onMessageSendBtnClick(text, id) {
-      dispatch(sendMessage(text, id));
-      dispatch(completeSendMessage());
+    onMessageSendBtnClick(id, text, existMessages) {
+      const newMessage = new Message(text);
+      dispatch(requestSendMessage());
+      writeMessage(id, newMessage, existMessages)
+      .then(messages => {
+        dispatch(recieveSendMessage(messages));
+      }).then(
+        getInitialChatList()
+          .then(chatList => {
+            dispatch(recieveInitialChatList(chatList));
+          }).catch(err => {
+            console.error(err);
+          })
+      ).catch(err => {
+        console.error(err);
+      });
     }
   };
 }

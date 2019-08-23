@@ -73,7 +73,6 @@ App.propTypes = {
   currentChat: PropTypes.object.isRequired,
   currentMessages: PropTypes.array.isRequired,
   isLoadingInitialChats: PropTypes.bool.isRequired,
-  isLoadingMessages: PropTypes.bool.isRequired,
   isLoadingCurrentChats: PropTypes.bool.isRequired,
   isLoadingCurMessages: PropTypes.bool.isRequired,
   onChatWindowLoad: PropTypes.func.isRequired,

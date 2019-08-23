@@ -25,11 +25,12 @@ export default class ChatWindow extends Component {
   }
 
   onSendBtnClick(target, id) {
+    const { currentMessages } = this.props;
     if (target.value === '') {
       return;
     }
 
-    this.props.onMessageSendBtnClick(target.value, id);
+    this.props.onMessageSendBtnClick(id, target.value, currentMessages);
     target.value = '';
   }
 
@@ -103,6 +104,7 @@ export default class ChatWindow extends Component {
                 placeholder="Type Something to send"
                 className="message-inputbox"
                 name="message"
+                autoFocus
               />
               <span className="sendbtn-wrap">
                 <input type="submit" className="sendbtn" value="보내기" />

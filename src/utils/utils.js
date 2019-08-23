@@ -12,7 +12,6 @@ export function changeDateFormat(date) {
   const today = new Date();
   const periodFromNow = Math.floor((today - targetDate) / 60000);
 
-
   if (periodFromNow < 1440) {
     const periodFromNowToString = formatDistanceStrict(
       targetDate,
@@ -23,17 +22,6 @@ export function changeDateFormat(date) {
 
   }
   return format(targetDate, 'MM/dd');
-}
-
-export function addInitialMessageToChatList (chatList, messages) {
-  return chatList.map(chat => {
-    const messageHistory = messages[chat.messages + ''].message
-
-    return Object.assign(chat, {
-      initialMessage: messageHistory[messageHistory.length - 1].text,
-      lastUpdate: messageHistory[messageHistory.length - 1].datetime
-    });
-  });
 }
 
 export function sortObjectsInArrayByDate (array, dateKey) {

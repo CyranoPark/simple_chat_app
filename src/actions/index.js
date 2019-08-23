@@ -1,14 +1,12 @@
 import {
   REQUEST_INIT_CHAT_LIST,
   RECIEVE_INIT_CHAT_LIST,
-  REQUEST_INIT_MESSAGES,
-  RECIEVE_INIT_MESSAGES,
   REQUEST_CURRENT_CHAT,
   RECIEVE_CURRENT_CHAT,
   REQUEST_CURRENT_MESSAGES,
   RECIEVE_CURRENT_MESSAGES,
-  SEND_MESSAGE,
-  COMPLETE_SEND_MESSAGE
+  REQUEST_SEND_MESSAGE,
+  RECIEVE_SEND_MESSAGE
 } from '../constants/actionType';
 
 export const requestInitialChatList = () => {
@@ -24,29 +22,16 @@ export const recieveInitialChatList = (chats) => {
   };
 };
 
-export const requestInitialMessages = () => {
-  return {
-    type: REQUEST_INIT_MESSAGES,
-  };
-};
-
-export const recieveInitialMessages = (messages) => {
-  return {
-    type: RECIEVE_INIT_MESSAGES,
-    messages
-  };
-};
-
 export const requestCurrentMessages = () => {
   return {
     type: REQUEST_CURRENT_MESSAGES,
   };
 };
 
-export const recieveCurrentMessages = (id) => {
+export const recieveCurrentMessages = (messages) => {
   return {
     type: RECIEVE_CURRENT_MESSAGES,
-    id
+    messages
   };
 };
 
@@ -63,16 +48,17 @@ export const recieveCurrentChat = (id) => {
   };
 };
 
-export const sendMessage = (text, id) => {
+export const requestSendMessage = () => {
   return {
-    type: SEND_MESSAGE,
-    text,
-    id
+    type: REQUEST_SEND_MESSAGE
   };
 };
 
-export const completeSendMessage = () => {
+
+export const recieveSendMessage = (messages) => {
   return {
-    type: COMPLETE_SEND_MESSAGE
+    type: RECIEVE_SEND_MESSAGE,
+    messages
   };
 };
+

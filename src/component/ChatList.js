@@ -7,6 +7,7 @@ export default function ChatList (props) {
   const { chatList } = props;
 
   const renderChatList = chatList.map((chat, i) => {
+
     return (
       <Link key={i} to={`/chatList/${chat.id}`}>
         <li className="chat">

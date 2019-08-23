@@ -14,19 +14,47 @@ firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 
 export const getInitialChatList = () => {
+  let getInitialMessage = [];
   return new Promise((resolve) => {
     database.ref('/chatlist').once('value').then(function(snapshot) {
+      const chatList = snapshot.val();
+      chatList.forEach((chat) => {
+        getInitialMessage.push(
+          getMessagesById(chat.id).then(({ message }) => {
+            chat.initialMessage = message[message.length - 1].text
+            chat.lastUpdate = message[message.length - 1].datetime
+            return chat;
+          })
+        );
+      });
+      resolve(Promise.all(getInitialMessage));
+    });
+  });
+};
+
+export const getMessagesById = (id) => {
+  return new Promise((resolve) => {
+    database.ref(`/messages/${id}`).once('value').then(function(snapshot) {
       const data = snapshot.val();
       resolve(data)
     });
   });
 };
 
-export const getInitialMessages = () => {
+export const writeMessage = (id, newMessage, existMessages) => {
   return new Promise((resolve) => {
-    database.ref('/messages').once('value').then(function(snapshot) {
-      const data = snapshot.val();
-      resolve(data)
-    });
+    // database.ref(`/messages/${id}`).once('value')
+    //   .then(function(snapshot) {
+        // const targetMessages = snapshot.val().message;
+        const messages = {
+          id : id,
+          message : [
+            ...existMessages,
+            newMessage
+          ]
+        };
+        database.ref(`/messages/${id}`).set(messages);
+        resolve(messages);
+      // });
   });
 };
