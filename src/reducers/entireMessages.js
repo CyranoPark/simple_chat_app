@@ -10,7 +10,7 @@ const initialState = {
   isLoadingMessages: true
 };
 
-export default function copiedMessages(state = initialState, action) {
+export default function entireMessages(state = initialState, action) {
   switch (action.type) {
   case REQUEST_INIT_MESSAGES:
     return Object.assign({...state}, {

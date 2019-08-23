@@ -9,7 +9,7 @@ export default class ChatWindow extends Component {
 
     this.chatWindowRef = React.createRef();
     this.userProfileImg = 'https://img.icons8.com/carbon-copy/2x/user.png';
-    this.maximumMessage = 8;
+    this.chatWindowHeight = 530;
   }
 
   componentDidMount() {
@@ -17,8 +17,10 @@ export default class ChatWindow extends Component {
   }
 
   componentDidUpdate() {
-    if (this.props.currentMessages.length > this.maximumMessage) {
-      this.chatWindowRef.current.scrollTop = this.chatWindowRef.current.scrollHeight;
+    if (this.chatWindowRef.current) {
+      if (this.chatWindowHeight < this.chatWindowRef.current.scrollHeight) {
+        this.chatWindowRef.current.scrollTop = this.chatWindowRef.current.scrollHeight;
+      }
     }
   }
 
@@ -29,12 +31,6 @@ export default class ChatWindow extends Component {
 
     this.props.onMessageSendBtnClick(target.value, id);
     target.value = '';
-  }
-
-  onInputBoxKeyDown(event, id) {
-    if (event.key === 'Enter') {
-      this.onSendBtnClick(event.target, id);
-    }
   }
 
   renderEmptyMessages() {
@@ -61,7 +57,7 @@ export default class ChatWindow extends Component {
             }
           />
           <div className="message-txt">
-            {message.text}
+            <span>{message.text}</span>
             <div className="message-datetime">{changeTimeFormat(message.datetime)}</div>
           </div>
         </li>
@@ -107,7 +103,6 @@ export default class ChatWindow extends Component {
                 placeholder="Type Something to send"
                 className="message-inputbox"
                 name="message"
-                onKeyDown={(e) => this.onInputBoxKeyDown(e, currentChat.id)}
               />
               <span className="sendbtn-wrap">
                 <input type="submit" className="sendbtn" value="보내기" />

@@ -1,6 +1,8 @@
+import * as actionType from '../constants/actionType';
 import entireChatList from './entireChatList';
 import entireMessages from './entireMessages';
-import * as actionType from '../constants/actionType';
+import currentChat from './currentChat';
+import currentMessages from './currentMessages';
 
 describe('entireChatList reducer', () => {
 
@@ -10,9 +12,7 @@ describe('entireChatList reducer', () => {
     ).toEqual(
       {
         chats: [],
-        currentChat: {},
-        isLoadingInitialChats: true,
-        isLoadingCurrentChats : true
+        isLoadingInitialChats: true
       }
     );
   });
@@ -23,9 +23,7 @@ describe('entireChatList reducer', () => {
     beforeEach(() => {
       state = {
         chats: [],
-        currentChat: {},
-        isLoadingInitialChats: true,
-        isLoadingCurrentChats : true
+        isLoadingInitialChats: true
       };
     });
 
@@ -65,38 +63,33 @@ describe('entireChatList reducer', () => {
 
     beforeEach(() => {
       state = {
-        chats: [
-          {id : '0', name : 'hanjun'},
-          {id : '1', name : 'han'}
-        ],
-        currentChat: {},
-        isLoadingInitialChats: true,
+        currentChatId: null,
         isLoadingCurrentChats : true
       };
     });
 
-    it('should  be changed to wait for messages data', () => {
+    it('should  be changed to wait for current chat data', () => {
       const actionData = {
         type: actionType.REQUEST_CURRENT_CHAT
       };
 
       expect(
-        entireChatList(state, actionData).isLoadingCurrentChats
+        currentChat(state, actionData).isLoadingCurrentChats
       ).toEqual(true);
     });
 
-    it('should  be changed "current chats" list and loading status', () => {
+    it('should  be changed "current chats" id and loading status', () => {
       const actionData = {
         type: actionType.RECIEVE_CURRENT_CHAT,
-        id: '0'
+        id: 0
       };
 
       expect(
-        entireChatList(state, actionData).isLoadingCurrentChats
+        currentChat(state, actionData).isLoadingCurrentChats
       ).toEqual(false);
       expect(
-        entireChatList(state, actionData).currentChat
-      ).toEqual({id : '0', name : 'hanjun'});
+        currentChat(state, actionData).currentChatId
+      ).toEqual(0);
     });
   });
 });
@@ -109,9 +102,7 @@ describe('entireMessages reducer', () => {
     ).toEqual(
       {
         messages: {},
-        currentMessages: [],
-        isLoadingMessages: true,
-        isLoadingCurMessages : true
+        isLoadingMessages: true
       }
     );
   });
@@ -122,9 +113,7 @@ describe('entireMessages reducer', () => {
     beforeEach(() => {
       state = {
         messages: {},
-        currentMessages: [],
-        isLoadingMessages: true,
-        isLoadingCurMessages : true
+        isLoadingMessages: true
       };
     });
 
@@ -173,21 +162,8 @@ describe('entireMessages reducer', () => {
 
     beforeEach(() => {
       state = {
-        messages: {
-          "allId" : ["0"],
-          "0" : {
-            "id" : 0,
-            "message" : [
-              {
-                "text" : "시나리오 쓰고 있네",
-                "datetime" : "2019-08-16T13:40:38.297Z",
-                "isRecieved" : true
-              }
-            ]
-          }
-        },
-        currentMessages: [],
-        isLoadingMessages: true,
+        currentMessageId: null,
+        newMessages: {},
         isLoadingCurMessages : true
       };
     });
@@ -198,7 +174,7 @@ describe('entireMessages reducer', () => {
       }
 
       expect(
-        entireMessages(state, actionData).isLoadingCurMessages
+        currentMessages(state, actionData).isLoadingCurMessages
       ).toEqual(true);
     });
 
@@ -208,57 +184,44 @@ describe('entireMessages reducer', () => {
         id: 0
       };
       expect(
-        entireMessages(state, actionData).isLoadingCurMessages
+        currentMessages(state, actionData).isLoadingCurMessages
       ).toEqual(false);
       expect(
-        entireMessages(state, actionData).currentMessages[0].text
-      ).toEqual('시나리오 쓰고 있네');
-      expect(
-        entireMessages(state, actionData).currentMessages[0].isRecieved
-      ).toEqual(true);
+        currentMessages(state, actionData).currentMessageId
+      ).toEqual(0);
     });
   });
 
   describe('should update message data when user send message', () => {
+    const state = {
+      currentMessageId: null,
+      newMessages: {},
+      isLoadingCurMessages : true
+    };
 
-    it('should  be changed to wait for message list data', () => {
+    it('should  be saved message', () => {
       const actionData = {
         type: actionType.SEND_MESSAGE,
-        id: 0,
         text: 'new'
       };
 
-      const state = {
-        messages: {
-          "allId" : ["0"],
-          "0" : {
-            "id" : 0,
-            "message" : [
-              {
-                "text" : "wow",
-                "datetime" : "2019-08-16T13:40:38.297Z",
-                "isRecieved" : true
-              }
-            ]
-          }
-        },
-        currentMessages: [],
-        isLoadingMessages: true,
-        isLoadingCurMessages : true
-      };
-
       expect(
-        entireMessages(state, actionData)
+        currentMessages(state, actionData)
       ).not.toEqual(state);
       expect(
-        entireMessages(state, actionData).currentMessages[0].text
-      ).toEqual('wow');
-      expect(
-        entireMessages(state, actionData).currentMessages[1].text
+        currentMessages(state, actionData).newMessages.text
       ).toEqual('new');
+    });
+
+    it('should be empty new message when complete send message', () => {
+      const actionData = {
+        type: actionType.COMPLETE_SEND_MESSAGE
+      };
+
+
       expect(
-        entireMessages(state, actionData).messages[0].message[1].text
-      ).toEqual('new');
+        currentMessages(state, actionData).newMessages
+      ).toEqual({});
     });
   });
 });
