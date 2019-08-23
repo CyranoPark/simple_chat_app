@@ -1,3 +1,6 @@
+import { format, formatDistanceStrict } from 'date-fns'
+import koLocale from 'date-fns/locale/ko';
+
 export function filterChatListById (chatList, id) {
   return chatList.find((chat) => {
     return chat.id + '' === id;
@@ -10,27 +13,34 @@ export function changeDateFormat(date) {
   const today = new Date();
   const periodFromNow = Math.floor((today - targetDate) / 60000);
 
-  if (periodFromNow < 1440) {
-    if(periodFromNow / 60 > 1){
-      return `${Math.floor(periodFromNow / 60)}시간 전`;
-    } else {
-      return `${periodFromNow}분 전`;
-    }
-  }
 
-  return `${displayDigit(targetDate.getMonth() + 1, 2)}/${displayDigit(targetDate.getDate(), 2)}`;
+  if (periodFromNow < 1440) {
+    const periodFromNowToString = formatDistanceStrict(
+      targetDate,
+      today,
+      { locale : koLocale }
+    );
+    return `${periodFromNowToString} 전`;
+
+  }
+  return format(targetDate, 'MM/dd');
 }
 
 export function changeTimeFormat(date) {
   const targetDate = new Date(date);
   const today = new Date();
   const periodFromNow = Math.floor((today - targetDate) / 60000);
+  const periodFromNowToString = formatDistanceStrict(
+    targetDate,
+    today,
+    { locale : koLocale }
+  );
 
   if (periodFromNow < targetDate.getHours() * 60) {
-    return `${displayDigit(targetDate.getHours(), 2)}:${displayDigit(targetDate.getMinutes(), 2)}`;
+    return `${periodFromNowToString} 전`;
   }
 
-  return `${displayDigit(targetDate.getMonth() + 1, 2)}/${displayDigit(targetDate.getDate(), 2)}`;
+  return format(targetDate, 'MM/dd');
 }
 
 export function addInitialMessageToChatList (chatList, messages) {

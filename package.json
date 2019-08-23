@@ -8,6 +8,7 @@
   "description": "Fake Chat Application React",
   "private": true,
   "dependencies": {
+    "date-fns": "^2.0.0",
     "enzyme": "^3.10.0",
     "enzyme-adapter-react-16": "^1.14.0",
     "enzyme-adapter-react-16.1": "^1.6.1",
