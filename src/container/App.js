@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 import firebase from 'firebase';
 import App from '../component/App';
 import * as actions from '../actions';
-import { getInitialChatList, getMessagesById, getChatsById, writeMessage } from '../utils/api';
+import { getInitialChatList, getChatsById, writeMessage } from '../utils/api';
 import {
   sortObjectsInArrayByDate,
   Message
