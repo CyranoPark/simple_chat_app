@@ -108,6 +108,7 @@ export default class ChatWindow extends Component {
                 e.preventDefault();
                 this.handleSendBtnClick(currentChat.id)
               }}
+              autoComplete="off"
             >
               <input
                 type="text"
