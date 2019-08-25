@@ -1,4 +1,5 @@
 import { connect } from 'react-redux';
+import firebase from 'firebase';
 import App from '../component/App';
 import * as actions from '../actions';
 import { getInitialChatList, getMessagesById, getChatsById, writeMessage } from '../utils/api';
@@ -7,6 +8,7 @@ import {
   Message
 } from '../utils/utils';
 
+const database = firebase.database();
 const {
   requestInitialChatList,
   recieveInitialChatList,
@@ -58,10 +60,16 @@ const mapDispatchToProps = (dispatch) => {
       dispatch(requestCurrentMessages());
       dispatch(requestCurrentChat());
 
-      Promise.all([getChatsById(id), getMessagesById(id)])
-        .then(([chats, messages]) => {
+      database.ref(`/messages/${id}`).on('value', function(snapshot) {
+        const messages = snapshot.val();
+        dispatch(recieveCurrentMessages(messages.message));
+      }, function () {
+        dispatch(failureFetchCurData());
+      });
+
+      getChatsById(id)
+        .then(chats => {
           dispatch(recieveCurrentChat(chats));
-          dispatch(recieveCurrentMessages(messages.message));
         }).catch(err => {
           console.error(err);
           dispatch(failureFetchCurData());
