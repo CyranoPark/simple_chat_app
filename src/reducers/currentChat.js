@@ -1,24 +1,33 @@
 import {
   REQUEST_CURRENT_CHAT,
-  RECIEVE_CURRENT_CHAT
+  RECIEVE_CURRENT_CHAT,
+  FAIURE_FETCH_CURRENT_DATA
 } from "../constants/actionType";
 
 const initialState = {
-  currentChatId: null,
-  isLoadingCurrentChats : true
+  currentChat: {},
+  isLoadingCurrentChats : true,
+  isFetchCurChatError : false
 };
 
 export default function entireChatList(state = initialState, action) {
   switch (action.type) {
     case REQUEST_CURRENT_CHAT:
       return Object.assign({...state}, {
+        currentChat: {},
         isLoadingCurrentChats: true
       });
 
     case RECIEVE_CURRENT_CHAT:
       return Object.assign({...state}, {
-        currentChatId: action.id,
+        currentChat: action.chats,
         isLoadingCurrentChats: false
+      });
+
+    case FAIURE_FETCH_CURRENT_DATA:
+      return Object.assign({...state}, {
+        currentChat: {},
+        isFetchCurChatError: true
       });
 
     default:

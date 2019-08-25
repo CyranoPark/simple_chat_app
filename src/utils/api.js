@@ -16,7 +16,7 @@ const database = firebase.database();
 export const getInitialChatList = () => {
   let getInitialMessage = [];
   return new Promise((resolve) => {
-    database.ref('/chatlist').once('value').then(function(snapshot) {
+    database.ref('/chatlist').on('value', function(snapshot) {
       const chatList = snapshot.val();
       chatList.forEach((chat) => {
         getInitialMessage.push(
@@ -34,27 +34,36 @@ export const getInitialChatList = () => {
 
 export const getMessagesById = (id) => {
   return new Promise((resolve) => {
-    database.ref(`/messages/${id}`).once('value').then(function(snapshot) {
-      const data = snapshot.val();
-      resolve(data)
+    database.ref(`/messages/${id}`).on('value', function(snapshot) {
+      const messages = snapshot.val();
+      resolve(messages);
     });
   });
 };
 
-export const writeMessage = (id, newMessage, existMessages) => {
+export const getChatsById = (id) => {
   return new Promise((resolve) => {
-    // database.ref(`/messages/${id}`).once('value')
-    //   .then(function(snapshot) {
-        // const targetMessages = snapshot.val().message;
-        const messages = {
-          id : id,
-          message : [
-            ...existMessages,
-            newMessage
-          ]
-        };
-        database.ref(`/messages/${id}`).set(messages);
-        resolve(messages);
-      // });
+    database.ref(`/chatlist/${id}`).on('value', function(snapshot) {
+      const chats = snapshot.val();
+      resolve(chats);
+    });
+  });
+};
+
+export const writeMessage = (id, newMessage) => {
+  return new Promise((resolve) => {
+    getMessagesById(id).then(messages => {
+      const newMessages = {
+        id : id,
+        message : [
+          ...messages.message,
+          newMessage
+        ]
+      };
+      return newMessages
+    }).then(newMessages => {
+      database.ref(`/messages/${id}`).set(newMessages)
+      .then(resolve(newMessages.message));
+    });
   });
 };

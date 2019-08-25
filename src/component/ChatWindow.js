@@ -24,14 +24,20 @@ export default class ChatWindow extends Component {
     }
   }
 
-  onSendBtnClick(target, id) {
-    const { currentMessages } = this.props;
-    if (target.value === '') {
+  handleSendBtnClick(id) {
+    const {
+      currentMessages,
+      messageBoxValue,
+      onInputBoxChange,
+      onMessageSendBtnClick
+    } = this.props;
+
+    if (messageBoxValue === '') {
       return;
     }
 
-    this.props.onMessageSendBtnClick(id, target.value, currentMessages);
-    target.value = '';
+    onMessageSendBtnClick(id, messageBoxValue, currentMessages);
+    onInputBoxChange('');
   }
 
   renderEmptyMessages() {
@@ -45,9 +51,9 @@ export default class ChatWindow extends Component {
     );
   }
 
-  renderMessages() {
-    const { currentChat, currentMessages } = this.props;
-    return currentMessages.map((message, i) => {
+  renderMessages(messages) {
+    const { currentChat, newMessageDatetime, isLoadingCurrentChat } = this.props;
+    return messages.map((message, i) => {
       return (
         <li className={message.isRecieved ? "received-message" : "sent-message"} key={i}>
           <div
@@ -59,7 +65,13 @@ export default class ChatWindow extends Component {
           />
           <div className="message-txt">
             <span>{message.text}</span>
-            <div className="message-datetime">{changeDateFormat(message.datetime)}</div>
+            <div className="message-datetime">
+              {
+                isLoadingCurrentChat && message.datetime === newMessageDatetime ?
+                'loading'
+                : changeDateFormat(message.datetime)
+              }
+            </div>
           </div>
         </li>
       );
@@ -69,14 +81,12 @@ export default class ChatWindow extends Component {
   render() {
     const {
       currentChat,
-      isLoadingCurrentChats,
-      isLoadingCurMessages,
-      currentMessages
+      currentMessages,
+      messageBoxValue,
+      isLoadingCurrentChat,
+      isFetchCurDataError,
+      onInputBoxChange
     } = this.props;
-
-    if (isLoadingCurrentChats || isLoadingCurMessages) {
-      return null;
-    }
 
     return (
       <>
@@ -84,19 +94,19 @@ export default class ChatWindow extends Component {
           <Link to="/chatList">
             <button className="back-btn" value="back">뒤로</button>
           </Link>
-          <span>{currentChat.name}</span>
+          <span>{!isLoadingCurrentChat && currentChat.name}</span>
         </header>
         <div className="chat-container">
           <div className="chat-container-blank" />
           <ul className="message-list" ref={this.chatWindowRef}>
-            {currentMessages.length ? this.renderMessages() : this.renderEmptyMessages()}
+            {isFetchCurDataError ? this.renderEmptyMessages() : this.renderMessages(currentMessages)}
           </ul>
           <div className="chat-container-blank" />
           <div className="send-message-box">
             <form
               onSubmit={(e) => {
                 e.preventDefault();
-                this.onSendBtnClick(e.target.message, currentChat.id)
+                this.handleSendBtnClick(currentChat.id)
               }}
             >
               <input
@@ -104,6 +114,8 @@ export default class ChatWindow extends Component {
                 placeholder="Type Something to send"
                 className="message-inputbox"
                 name="message"
+                value={messageBoxValue}
+                onChange={(e) => {onInputBoxChange(e.target.value)}}
                 autoFocus
               />
               <span className="sendbtn-wrap">

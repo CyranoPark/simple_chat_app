@@ -16,19 +16,23 @@ export default class App extends Component {
       chatList,
       currentChat,
       currentMessages,
+      messageBoxValue,
+      newMessageDatetime,
       isLoadingInitialChats,
-      isLoadingMessages,
-      isLoadingCurrentChats,
-      isLoadingCurMessages,
+      isLoadingCurrentChat,
+      isFetchInitDataError,
+      isFetchCurDataError,
+      initialDataLoad,
       onChatWindowLoad,
-      onMessageSendBtnClick
+      onMessageSendBtnClick,
+      onInputBoxChange
     } = this.props;
 
     return (
       <div className="App">
         <div className="chat-app">
           {
-            isLoadingInitialChats || isLoadingMessages ?
+            isLoadingInitialChats ?
             <LoadingModal />
             : (
               <>
@@ -42,6 +46,8 @@ export default class App extends Component {
                     <ChatList
                       {...routeProps}
                       chatList={chatList}
+                      initialDataLoad={initialDataLoad}
+                      isFetchInitDataError={isFetchInitDataError}
                     />
                   }
                 />
@@ -52,10 +58,13 @@ export default class App extends Component {
                       {...routeProps}
                       currentChat={currentChat}
                       currentMessages={currentMessages}
-                      isLoadingCurrentChats={isLoadingCurrentChats}
-                      isLoadingCurMessages={isLoadingCurMessages}
+                      messageBoxValue={messageBoxValue}
+                      newMessageDatetime={newMessageDatetime}
+                      isLoadingCurrentChat={isLoadingCurrentChat}
+                      isFetchCurDataError={isFetchCurDataError}
                       onChatWindowLoad={onChatWindowLoad}
                       onMessageSendBtnClick={onMessageSendBtnClick}
+                      onInputBoxChange={onInputBoxChange}
                     />
                   }
                 />
@@ -73,8 +82,7 @@ App.propTypes = {
   currentChat: PropTypes.object.isRequired,
   currentMessages: PropTypes.array.isRequired,
   isLoadingInitialChats: PropTypes.bool.isRequired,
-  isLoadingCurrentChats: PropTypes.bool.isRequired,
-  isLoadingCurMessages: PropTypes.bool.isRequired,
+  isLoadingCurrentChat: PropTypes.bool.isRequired,
   onChatWindowLoad: PropTypes.func.isRequired,
   onMessageSendBtnClick : PropTypes.func.isRequired,
 };

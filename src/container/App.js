@@ -1,10 +1,9 @@
 import { connect } from 'react-redux';
 import App from '../component/App';
 import * as actions from '../actions';
-import { getInitialChatList, getMessagesById, writeMessage } from '../utils/api';
+import { getInitialChatList, getMessagesById, getChatsById, writeMessage } from '../utils/api';
 import {
   sortObjectsInArrayByDate,
-  filterChatListById,
   Message
 } from '../utils/utils';
 
@@ -16,26 +15,31 @@ const {
   requestCurrentMessages,
   recieveCurrentMessages,
   requestSendMessage,
-  recieveSendMessage
+  recieveSendMessage,
+  changeInputBoxValue,
+  failureFetchInitData,
+  failureFetchCurData
 } = actions;
 
 const mapStateToProps = (state) => {
-  const { chats, isLoadingInitialChats } = state.entireChatList;
-  const { currentChatId, isLoadingCurrentChats } = state.currentChat;
-  const { currentMessage, isLoadingCurMessages } = state.currentMessages;
-  const currentChat = currentChatId ? filterChatListById(chats, currentChatId) : {};
-  let currentMessages = currentMessage ? currentMessage.message : [];
+  const { chats, isLoadingInitialChats, isFetchInitDataError } = state.entireChatList;
+  const { currentChat, isLoadingCurrentChats, isFetchCurChatError } = state.currentChat;
+  const { currentMessage, messageBoxValue, newMessageDatetime, isLoadingCurMessages, isFetchCurMessagesError } = state.currentMessages;
 
-  const newProps = {
+  const isLoadingCurrentChat = isLoadingCurrentChats || isLoadingCurMessages;
+  const isFetchCurDataError = isFetchCurChatError || isFetchCurMessagesError;
+
+  return {
     chatList: sortObjectsInArrayByDate(chats, 'lastUpdate'),
     currentChat: currentChat,
-    currentMessages: currentMessages,
+    currentMessages: currentMessage,
+    messageBoxValue: messageBoxValue,
+    newMessageDatetime: newMessageDatetime,
     isLoadingInitialChats: isLoadingInitialChats,
-    isLoadingCurrentChats: isLoadingCurrentChats,
-    isLoadingCurMessages: isLoadingCurMessages
+    isLoadingCurrentChat: isLoadingCurrentChat,
+    isFetchInitDataError: isFetchInitDataError,
+    isFetchCurDataError: isFetchCurDataError
   };
-
-  return newProps;
 }
 
 const mapDispatchToProps = (dispatch) => {
@@ -47,36 +51,43 @@ const mapDispatchToProps = (dispatch) => {
           dispatch(recieveInitialChatList(chatList));
         }).catch(err => {
           console.error(err);
+          dispatch(failureFetchInitData());
         });
     },
     onChatWindowLoad(id) {
       dispatch(requestCurrentMessages());
       dispatch(requestCurrentChat());
 
-      dispatch(recieveCurrentChat(id));
-
-      getMessagesById(id).then(messages => {
-        dispatch(recieveCurrentMessages(messages));
-      }).catch(err => {
-        console.error(err);
-      });
+      Promise.all([getChatsById(id), getMessagesById(id)])
+        .then(([chats, messages]) => {
+          dispatch(recieveCurrentChat(chats));
+          dispatch(recieveCurrentMessages(messages.message));
+        }).catch(err => {
+          console.error(err);
+          dispatch(failureFetchCurData());
+        });
     },
-    onMessageSendBtnClick(id, text, existMessages) {
+    onMessageSendBtnClick(id, text) {
       const newMessage = new Message(text);
-      dispatch(requestSendMessage());
-      writeMessage(id, newMessage, existMessages)
+      dispatch(requestSendMessage(newMessage));
+      writeMessage(id, newMessage)
       .then(messages => {
         dispatch(recieveSendMessage(messages));
-      }).then(
+      }).then(() => {
         getInitialChatList()
-          .then(chatList => {
-            dispatch(recieveInitialChatList(chatList));
-          }).catch(err => {
-            console.error(err);
-          })
-      ).catch(err => {
+        .then(chatList => {
+          dispatch(recieveInitialChatList(chatList));
+        }).catch(err => {
+          console.error(err);
+          dispatch(failureFetchInitData());
+        });
+      }).catch(err => {
         console.error(err);
+        dispatch(failureFetchCurData());
       });
+    },
+    onInputBoxChange(text) {
+      dispatch(changeInputBoxValue(text));
     }
   };
 }

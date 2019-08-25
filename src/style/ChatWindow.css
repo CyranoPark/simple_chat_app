@@ -45,7 +45,7 @@
   z-index: 1;
 }
 
-.received-message >.message-txt {
+.received-message > .message-txt {
   position: relative;
   display: inline-block;
   max-width: 200px;
